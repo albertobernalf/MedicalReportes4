@@ -1,0 +1,217 @@
+{% extends "Reportes/menuReportes.html" %}
+{% load static %}
+
+{% block content %}
+<br/>
+
+<div class="row">
+
+    <div class="col-xl-1"></div>
+
+    <div class="col-xl-2" style="background-color: lavender;">
+
+        <figure class="figure">
+            <img src="{% static '/img/medical1.jpg' %}" class="figure-img img-fluid rounded"
+                 alt="...">
+            <figcaption class="figure-caption text-right">CLINICA MEDICAL
+            </figcaption>
+        </figure>
+
+    </div>
+
+    <div class="col-xl-1"></div>
+
+    <div class="col-xl-4" style="background-color: lavenderblush;">
+        <div class="mx-auto" style="width: 500px;">
+
+            <p class="text-center">
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Mision: <br>
+                <br>
+                <br>
+
+            Somos una institución privada dedicada a la prestación de servicios de salud con enfoque en cuidado crítico y servicios quirúrgicos del paciente adulto,
+
+            con estándares de calidad en la atención y compromiso por satisfacer las necesidades del usuario y su familia, garantizando rentabilidad y permanencia
+
+            en el sector. ...
+
+            </p>
+
+            <br/> <br/>
+
+
+            <p class="text-left">
+
+                <bold>
+
+                    <bold>
+            </p>
+
+        </div>
+    </div>
+
+    <div class="col-xl-1">
+
+    </div>
+
+
+    <div class="col-xl-2" style="background-color: lavender;">
+
+
+         <figure class="figure">
+            <img src="{% static '/img/Doctor1.jpg' %}" class="figure-img img-fluid rounded"
+                 alt="...">
+            <figcaption class="figure-caption text-right">Actitud de Servicio
+            </figcaption>
+        </figure>
+
+    </div>
+
+</div>
+
+<div class="col-xl-1"></div>
+
+
+<br/>
+
+
+
+<div class="container">
+    <div class="card">
+
+
+        <div class="card-block" align="center">
+            <br>
+
+            <table>
+                <center>
+                    <tr>
+                        <td><font size="7"> Generador de Informes imhotep</font></td>
+
+                    </tr>
+            </table>
+            <br>
+
+            <form method="post">
+                <div class="myDiv" id="mensajes"> {{mensaje.mensaje}}</div>
+
+
+                {% for parametrosSeleccionado in ParametrosSeleccionado %}
+
+
+                {{parametrosSeleccionado.param_texto }}
+
+                <input type={{parametrosSeleccionado.param_tipocampo}} id={{parametrosSeleccionado.parametro}} name={{parametrosSeleccionado.parametro}} value=""/>
+                <br>
+
+                {% endfor %}
+
+                <p>
+                    <br>
+                    Seleccione Tipo de Archivo :<br>
+                    <br>
+                    {% for reporteSeleccionado in ReporteSeleccionado %}
+
+                        {%if reporteSeleccionado.excel == 'A' %}
+                            <input type="radio" name="tipoArchivo" value="excel"> Excel<br>
+                        {% endif %}
+
+                        {%if reporteSeleccionado.pdf == 'A' %}
+                            <input type="radio" name="tipoArchivo" value="pdf"> Pdf<br>
+                        {% endif %}
+
+                        {%if reporteSeleccionado.csv == 'A' %}
+                            <input type="radio" name="tipoArchivo" value="csv"> csv<br>
+                        {% endif %}
+                    {% endfor %}
+
+
+                </p>
+                  {% for reporteSeleccionado in ReporteSeleccionado %}
+
+                     <input type="hidden" id="cuerpoSql" name="cuerpoSql" value="{{reporteSeleccionado.cuerpo_sql}}">
+                     <input type="hidden" id="encabezados" name="encabezados" value="{{reporteSeleccionado.encabezados}}">
+                     <input type="hidden" id="numReporte" name="numReporte" value="{{reporteSeleccionado.numreporte}}">
+                     <input type="hidden" id="nombreReporte" name="nombreReporte" value="{{reporteSeleccionado.reporte}}">
+
+                     <input type="hidden" id="username"         name="username"         value="{{Username}}">
+                     <input type="hidden" id="sedeSeleccionada" name="sedeSeleccionada" value="{{SedeSeleccionada}}">
+
+                 {% endfor %}
+
+                <input type="submit" value="Solicitar" onclick="return mandoEjecutar();"/> <span id="proceso"></span>
+            </form>
+        </div>
+    </div>
+
+</div>
+<script>
+
+function mandoEjecutar() {
+
+   document.getElementById('proceso').innerHTML='Procesando ...';
+   document.getElementById('proceso').style.color = '#3380FF';
+   return true;
+}
+
+
+    function valida()
+    {
+
+    var datos = new FormData()
+
+    var documento =document.getElementById("documento").value;
+    var tipodoc =  document.getElementById("seleccion").value;
+
+
+        datos.append('tipodoc',tipodoc);
+        datos.append('documento',documento);
+
+    alert("voy ajax");
+
+
+        $.ajax({
+            	   type: 'POST',
+ 	                url: window.location.pathname,
+  	               data: datos ,
+ 	      		success: function (respuesta2) {
+ 	      		          var dato = JSON.parse(respuesta2);
+ 	      		          alert(dato);
+
+                              $("#mensajes").html("Paciente No existe");
+                          		},
+ 	      		error: function (request, status, error) {
+ 	      			alert(request.responseText);
+ 	      			alert (error);
+ 	      			$("#mensajes").html("Error Venta AJAX O RESPUESTA");
+ 	      		},
+ 	      		cache : false,
+ 	      		contentType : false,
+ 	      		processData: false,
+
+ 	        });
+
+
+
+
+    }
+
+</script>
+            <br>
+            <br>
+
+            <center>
+
+        {% for reporteSeleccionado in ReporteSeleccionado %}
+              Informe: {{reporteSeleccionado.reporte}}
+        {% endfor %}
+                <br>
+
+        {% for nombreUsuario in NombreUsuario %}
+              Usuario: {{nombreUsuario.nom_usuario}}
+        {% endfor %}
+
+                </center>
+
+{% endblock %}
